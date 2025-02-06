@@ -1,8 +1,10 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for frontend interaction
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bus_capp.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -35,7 +37,12 @@ class NewsfeedItem(db.Model):
     content = db.Column(db.Text, nullable=False)
     posted_on = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Routes
+# Serve UI
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# API Routes
 @app.route('/bus_routes', methods=['GET'])
 def get_bus_routes():
     routes = BusRoute.query.all()
